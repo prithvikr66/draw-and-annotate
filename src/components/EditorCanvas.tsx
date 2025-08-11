@@ -151,10 +151,16 @@ export const EditorCanvas = ({ imageUrl, activeTool, textOptions, onToolChange }
             fontWeight: textOptions.bold ? "bold" : "normal",
             textAlign: textOptions.alignment,
             fill: "#007bff",
+            editable: true,
           });
           
           fabricCanvas.add(text);
           setAnnotationHistory(prev => [...prev, text]);
+          
+          // Enter editing mode immediately after adding text
+          fabricCanvas.setActiveObject(text);
+          (text as any).enterEditing();
+          (text as any).selectAll();
           break;
       }
 
