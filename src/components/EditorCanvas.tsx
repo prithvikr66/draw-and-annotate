@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Canvas as FabricCanvas, FabricImage, Rect, Circle, FabricText, Line, Point } from "fabric";
+import { Canvas as FabricCanvas, FabricImage, Rect, Circle, FabricText, Line, Point, Group } from "fabric";
 import { Tool, TextOptions } from "./ImageEditor";
 import { toast } from "sonner";
 
@@ -143,18 +143,59 @@ export const EditorCanvas = ({ imageUrl, activeTool, textOptions, onToolChange }
           break;
 
         case "text":
+          // Create the annotation box
+          const boxWidth = 200;
+          const boxHeight = 60;
+          const boxX = pointer.x + 40; // Offset the box from click point
+          const boxY = pointer.y - 70; // Position box above click point
+          
+          const annotationBox = new Rect({
+            left: boxX,
+            top: boxY,
+            width: boxWidth,
+            height: boxHeight,
+            fill: "#10b981", // Green color
+            stroke: "#059669",
+            strokeWidth: 2,
+            rx: 8, // Rounded corners
+            ry: 8,
+          });
+          
           const text = new FabricText("Double click to edit", {
-            left: pointer.x,
-            top: pointer.y,
+            left: boxX + boxWidth / 2,
+            top: boxY + boxHeight / 2,
             fontSize: textOptions.fontSize,
             fontFamily: textOptions.fontFamily,
             fontWeight: textOptions.bold ? "bold" : "normal",
             textAlign: textOptions.alignment,
-            fill: "#007bff",
+            fill: "white",
+            originX: "center",
+            originY: "center",
           });
           
-          fabricCanvas.add(text);
-          setAnnotationHistory(prev => [...prev, text]);
+          // Create V-shaped tooltip pointing to click location
+          const tooltipX = boxX + 20; // Left side of the box
+          const tooltipY = boxY + boxHeight; // Bottom of the box
+          
+          // Left line of the V
+          const tooltipLine1 = new Line([pointer.x, pointer.y, tooltipX, tooltipY], {
+            stroke: "#10b981",
+            strokeWidth: 3,
+          });
+          
+          // Right line of the V  
+          const tooltipLine2 = new Line([pointer.x, pointer.y, tooltipX + 30, tooltipY], {
+            stroke: "#10b981",
+            strokeWidth: 3,
+          });
+          
+          // Group all elements together
+          const annotationGroup = new Group([annotationBox, text, tooltipLine1, tooltipLine2], {
+            selectable: true,
+          });
+          
+          fabricCanvas.add(annotationGroup);
+          setAnnotationHistory(prev => [...prev, annotationGroup]);
           break;
       }
 
