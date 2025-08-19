@@ -42,7 +42,7 @@ export const TextCustomizer = ({ options, onChange }: TextCustomizerProps) => {
         <SelectContent>
           {fontFamilies.map((font) => (
             <SelectItem key={font} value={font}>
-              <span style={{ fontFamily: font }}>{font}</span>
+              {font}
             </SelectItem>
           ))}
         </SelectContent>
