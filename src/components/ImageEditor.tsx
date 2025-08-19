@@ -11,7 +11,7 @@ export interface TextOptions {
   fontSize: number;
   fontFamily: string;
   bold: boolean;
-  alignment: "left" | "center" | "right";
+  alignment: "left" | "center" | "right" | "justify";
 }
 
 export const ImageEditor = () => {
